@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 # Declaração de chaves para autenticação com Twitter
 import tweepy as tw
+from decouple import config
 
-consumer_key = "n1BIct6YSDLqlB2Texvb5kd1Y"
-consumer_secret = "t33yYeGxvIsXmTRnnjSrWKY5bSzXKz9z4RY4R4Zhkx0QApaarE"
-access_token = "1297260503866146816-Veaof9L5wDf27d8szNdQWyin3wYtQW"
-access_token_secret = "i6Q7duAQP7t090OSJr5n5HG52FHhc7eKPRsCg1XA0CDEC"
+consumer_key = config('CONSUMER_KEY')
+consumer_secret = config('CONSUMER_SECRET')
+access_token = config('ACCESS_TOKEN')
+access_token_secret = config('ACCESS_TOKEN_SECRET')
 
 auth = tw.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
@@ -13,9 +14,8 @@ api = tw.API(auth)
 
 # Pesquisa por fotos postadas por celebridades
 celebrities = ['cauareymond', 'aguiarthur', 'ivetesangalo', 'ClaudiaLeitte', 'neymarjr', 'BruMarquezine',
-               'mariruybarbosa',
-               'FePaesLeme', 'Tatawerneck', 'FlaviaAleReal', 'julianapaes', 'dedesecco', 'SabrinaSato', 'ahickmann',
-               'gusttavo_lima', 'Anitta']
+               'mariruybarbosa', 'FePaesLeme', 'Tatawerneck', 'FlaviaAleReal', 'julianapaes', 'dedesecco',
+               'SabrinaSato', 'ahickmann', 'gusttavo_lima', 'Anitta']
 
 for celebrity in celebrities:
     tweets = tw.Cursor(
@@ -39,8 +39,7 @@ class StreamListenerTrack(tw.StreamListener):
     def on_status(status):
         print(status.user.screen_name)
         print(status.text)
-        print('-----')
-        print('\n')
+        print('-----\n')
 
 
 stream_track = tw.Stream(auth=auth, listener=StreamListenerTrack())
@@ -48,11 +47,10 @@ stream_track.filter(track=celebrities)
 
 # Configurando API Vision Azure
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
-from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from msrest.authentication import CognitiveServicesCredentials
 import json
 
-credentials = CognitiveServicesCredentials("5e63c3bfe7de46ec9890e83df21c0924")
+credentials = CognitiveServicesCredentials(config('AZURE_CREDENTIAL'))
 client = ComputerVisionClient("https://vision-twitter.cognitiveservices.azure.com/", credentials)
 
 
@@ -88,8 +86,7 @@ class StreamListenerFollow(tw.StreamListener):
                 out.write(json.dumps(resultados))
                 out.write('\n')
 
-        print('-----')
-        print('\n')
+        print('-----\n')
 
 
 # Seguir novas publicações de um usuário
